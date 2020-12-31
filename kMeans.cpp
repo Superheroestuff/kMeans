@@ -37,7 +37,7 @@ struct Cluster
     vector<Point> clusterPoints;
 
 
-    bool operator!=(Cluster &c)
+    bool isChanged(Cluster &c)
     {
         if(clusterPoints.size() != c.clusterPoints.size())
             return 1;
@@ -119,15 +119,18 @@ void readFile(const char* fileName)
 void randomCentroids(Cluster c[])
 {
     random_device rd;
+
     uniform_real_distribution<double> unif(2,10);
     default_random_engine re(rd());
+
+    uniform_real_distribution<double> unif2(2,10);
     default_random_engine re2(rd());
 
     //for each Cluster we initialize random Center
     for(int i = 0; i<k ; i++)
     {
         c[i].x = unif(re);
-        c[i].y = unif(re2);
+        c[i].y = unif2(re2);
     }
 }
 
@@ -163,13 +166,16 @@ void kMeans(Cluster c[])
         cout<<"Size of cluster: "<<c[i].clusterPoints.size()<<endl;
         cout<<"Coordinates of centroid of cluster: X->"<<c[i].x<<" Y->"<<c[i].y<<endl;
         cout<<endl;
-    }
 
+    }
+        cout<<endl;
+        cout<<endl;
     while(true)
     {
         Cluster newClusters[k];
         for(int i = 0; i<k; i++)
         {
+            newClusters[i].clusterPoints.clear();
             newClusters[i]=c[i];
             newClusters[i].changeCenter();
         }
@@ -177,7 +183,7 @@ void kMeans(Cluster c[])
         bool isChanged = 0;
         for(int i = 0; i<k; i++)
         {
-            if(newClusters[i]!=c[i])
+            if(newClusters[i].isChanged(c[i]))
             {
                 isChanged = 1;
                 break;
@@ -189,6 +195,7 @@ void kMeans(Cluster c[])
 
         for(int i = 0; i<k; i++)
         {
+            c[i].clusterPoints.clear();
             c[i] = newClusters[i];
         }
 
@@ -198,7 +205,11 @@ void kMeans(Cluster c[])
             cout<<"Size of cluster: "<<c[i].clusterPoints.size()<<endl;
             cout<<"Coordinates of centroid of cluster: X->"<<c[i].x<<" Y->"<<c[i].y<<endl;
             cout<<endl;
+
         }
+
+            cout<<endl;
+            cout<<endl;
     }
 }
 
