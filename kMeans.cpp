@@ -3,6 +3,7 @@
 #include<vector>
 #include<fstream>
 #include<random>
+#include<time.h>
 using namespace std;
 
 int k;
@@ -36,7 +37,7 @@ struct Cluster
     vector<Point> clusterPoints;
 
 
-    bool operator==(Cluster &c)
+    bool operator!=(Cluster &c)
     {
         if(clusterPoints.size() != c.clusterPoints.size())
             return 1;
@@ -122,18 +123,18 @@ void randomCentroids(Cluster c[])
     default_random_engine re(rd());
     default_random_engine re2(rd());
 
-   //for each Cluster we initialize random Center
-   for(int i = 0; i<k ; i++)
-   {
-       c[i].x = unif(re);
-       c[i].y = unif(re2);
-   }
+    //for each Cluster we initialize random Center
+    for(int i = 0; i<k ; i++)
+    {
+        c[i].x = unif(re);
+        c[i].y = unif(re2);
+    }
 }
 
 
 void setClusterToPoints(Cluster c[])
 {
-    for(int p = 0; p<points.size();p++)
+    for(int p = 0; p<points.size(); p++)
     {
         int setCluster = -1;
         double minDist = (double)99999;
@@ -151,12 +152,64 @@ void setClusterToPoints(Cluster c[])
     }
 }
 
+void kMeans(Cluster c[])
+{
+    randomCentroids(c);
+    setClusterToPoints(c);
+
+    for(int i = 0; i<k; i++)
+    {
+        cout<<"Cluster "<<i<<":"<<endl;
+        cout<<"Size of cluster: "<<c[i].clusterPoints.size()<<endl;
+        cout<<"Coordinates of centroid of cluster: X->"<<c[i].x<<" Y->"<<c[i].y<<endl;
+        cout<<endl;
+    }
+
+    while(true)
+    {
+        Cluster newClusters[k];
+        for(int i = 0; i<k; i++)
+        {
+            newClusters[i]=c[i];
+            newClusters[i].changeCenter();
+        }
+        setClusterToPoints(newClusters);
+        bool isChanged = 0;
+        for(int i = 0; i<k; i++)
+        {
+            if(newClusters[i]!=c[i])
+            {
+                isChanged = 1;
+                break;
+            }
+        }
+
+        if(isChanged == 0)
+            break;
+
+        for(int i = 0; i<k; i++)
+        {
+            c[i] = newClusters[i];
+        }
+
+        for(int i = 0; i<k; i++)
+        {
+            cout<<"Cluster "<<i<<":"<<endl;
+            cout<<"Size of cluster: "<<c[i].clusterPoints.size()<<endl;
+            cout<<"Coordinates of centroid of cluster: X->"<<c[i].x<<" Y->"<<c[i].y<<endl;
+            cout<<endl;
+        }
+    }
+}
+
 int main()
 {
+    srand((unsigned)time(0));
     readFile("normal.txt");
     //redFile("unbalance.txt");
-    cout<<"K: " ;
+    cout<<"Number of Clusters K is: " ;
     cin>>k;
-
+    Cluster c[k];
+    kMeans(c);
     return 0;
 }
