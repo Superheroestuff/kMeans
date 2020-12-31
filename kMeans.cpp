@@ -27,13 +27,13 @@ double euclidianDist(const Point &A, const Point &B)
 
 struct Cluster
 {
-    //coord for the center of the cluster
+    //coordinates for the center of the cluster
     double x;
     double y;
     vector<Point> clusterPoints;
 
 
-    bool isChanged(Cluster &c)
+    bool operator==(Cluster &c)
     {
         if(clusterPoints.size() != c.clusterPoints.size())
             return 1;
@@ -44,6 +44,34 @@ struct Cluster
                 return 1;
         }
         return 0;
+    }
+
+    operator =(Cluster &c)
+    {
+        x = c.x;
+        y = c.y;
+        for(int i = 0; i< c.clusterPoints.size(); i++)
+        {
+            this->clusterPoints.push(c.clusterPoints[i]);
+        }
+    }
+
+    void changeCenter()
+    {
+        if(clusterPoints.size() == 0)
+            return;
+
+        double sumX = 0;
+        double sumY = 0;
+        for(int i = 0; i< clusterPoints.size(); i++)
+        {
+            sumX += clusterPoints[i].x;
+            sumY += clusterPoints[i].y;
+        }
+        this->x = sumX / clusterPoints.size();
+        this->y = sumY / clusterPoints.size();
+
+        clusterPoints.clear();//clearing the cluster, because after we change the center, we start adding points from the beginning
     }
 
     void printCenterOfCluster()
