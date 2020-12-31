@@ -25,6 +25,32 @@ double euclidianDist(const Point &A, const Point &B)
     return sqrt(pow(x,2) + pow(y,2));
 }
 
+struct Cluster
+{
+    //coord for the center of the cluster
+    double x;
+    double y;
+    vector<Point> clusterPoints;
+
+
+    bool isChanged(Cluster &c)
+    {
+        if(clusterPoints.size() != c.clusterPoints.size())
+            return 1;
+
+        for(int i = 0; i<clusterPoints.size(); i++)
+        {
+            if((clusterPoints[i].x != c.clusterPoints[i].x) || (clusterPoints[i].y != c.clusterPoints[i].y))
+                return 1;
+        }
+        return 0;
+    }
+
+    void printCenterOfCluster()
+    {
+        cout<<"Center of Cluster: "<<x<<" "<<y<<endl;
+    }
+};
 
 void readFile(const char* fileName)
 {
@@ -58,9 +84,11 @@ void readFile(const char* fileName)
     }
 }
 
+
 int main()
 {
     readFile("normal.txt");
+    //redFile("unbalance.txt");
     cout<<points[2].x<<" "<<points[2].y<<endl;
     return 0;
 }
