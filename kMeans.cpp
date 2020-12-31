@@ -2,7 +2,10 @@
 #include<cmath>
 #include<vector>
 #include<fstream>
+#include<random>
 using namespace std;
+
+int k;
 
 struct Point
 {
@@ -52,7 +55,7 @@ struct Cluster
         y = c.y;
         for(int i = 0; i< c.clusterPoints.size(); i++)
         {
-            this->clusterPoints.push(c.clusterPoints[i]);
+            this->clusterPoints.push_back(c.clusterPoints[i]);
         }
     }
 
@@ -112,11 +115,48 @@ void readFile(const char* fileName)
     }
 }
 
+void randomCentroids(Cluster c[])
+{
+    random_device rd;
+    uniform_real_distribution<double> unif(2,10);
+    default_random_engine re(rd());
+    default_random_engine re2(rd());
+
+   //for each Cluster we initialize random Center
+   for(int i = 0; i<k ; i++)
+   {
+       c[i].x = unif(re);
+       c[i].y = unif(re2);
+   }
+}
+
+
+void setClusterToPoints(Cluster c[])
+{
+    for(int p = 0; p<points.size();p++)
+    {
+        int setCluster = -1;
+        double minDist = (double)99999;
+        for(int i = 0; i<k; i++)
+        {
+            Point center(c[i].x,c[i].y);
+            double currDist = euclidianDist(points[p], center);
+            if(currDist<minDist)
+            {
+                minDist = currDist;
+                setCluster = i;
+            }
+        }
+        c[setCluster].clusterPoints.push_back(points[p]);
+    }
+}
 
 int main()
 {
     readFile("normal.txt");
     //redFile("unbalance.txt");
-    cout<<points[2].x<<" "<<points[2].y<<endl;
+    cout<<"K: " ;
+    cin>>k;
+
     return 0;
 }
